@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
-    tools:context=".MainActivity">
+    tools:context=".activities.MainActivity">
 
     <TextView
         android:id="@+id/textHeader"
@@ -48,6 +48,7 @@
             android:layout_height="@dimen/_35sdp"
             android:layout_marginStart="@dimen/_12sdp"
             android:layout_marginLeft="@dimen/_12sdp"
+            android:background="@android:color/transparent"
             android:fontFamily="@font/ubunturegular"
             android:hint="@string/search_notes"
             android:imeOptions="actionDone"
@@ -77,16 +78,15 @@
         android:id="@+id/imageAddNoteMain"
         android:layout_width="@dimen/_40sdp"
         android:layout_height="@dimen/_40sdp"
+        android:layout_marginEnd="@dimen/_25ssp"
+        android:layout_marginRight="@dimen/_25ssp"
+        android:layout_marginBottom="@dimen/_25ssp"
         android:background="@drawable/background_add_button"
         android:contentDescription="@string/app_name"
         android:padding="@dimen/_5sdp"
         android:src="@drawable/ic_add"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintBottom_toTopOf=""
         app:layout_constraintEnd_toEndOf="parent"
-        app:tint="@color/colorPrimary"
-        android:layout_marginBottom="@dimen/_25ssp"
-        android:layout_marginRight="@dimen/_25ssp"
-        android:layout_marginEnd="@dimen/_25ssp" />
+        app:tint="@color/colorPrimary" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

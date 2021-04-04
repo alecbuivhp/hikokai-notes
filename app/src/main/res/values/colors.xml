@@ -9,12 +9,12 @@
     <color name="colorQuickActionsBackground">#2F2D2E</color>
     <color name="colorIcons">#A4A4A4</color>
     <color name="colorDefaultNoteColor">#333333</color>
-    <color name="colorMiscellaneousBackground">#1F1F1FF</color>
+    <color name="colorMiscellaneousBackground">#1F1F1F</color>
     <color name="colorNoteColor2">#FDBE38</color>
     <color name="colorNoteColor3">#FF4842</color>
     <color name="colorNoteColor4">#3A52FC</color>
     <color name="colorNoteColor5">#000000</color>
     <color name="colorDelete">#FF4842</color>
     <color name="colorSearchBackground">#333333</color>
-
+    <color name="colorSubContent">#CECECE</color>
 </resources>

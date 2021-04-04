@@ -10,11 +10,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.HikokaiNotes">
         <activity
-            android:name=".NoteActivity"
+            android:name=".activities.NoteActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".MainActivity"
+            android:name=".activities.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden">
             <intent-filter>
