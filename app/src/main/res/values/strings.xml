@@ -4,5 +4,10 @@
     <string name="search_notes">Search notes</string>
     <string name="note_title">Title</string>
     <string name="type_note_here">Type note here</string>
-    <string name="tag">Tag</string>
+    <string name="tag">Tags</string>
+    <string name="miscellaneous">Miscellaneous</string>
+    <string name="format_text">Format text</string>
+    <string name="delete_note">Delete note</string>
+    <string name="are_you_sure_you_want_to_delete_this_note">Are you sure you want to delete this note?</string>
+    <string name="cancel">Cancel</string>
 </resources>
