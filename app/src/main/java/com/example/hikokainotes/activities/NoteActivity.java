@@ -10,9 +10,11 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -22,6 +24,9 @@ import com.example.hikokainotes.R;
 import com.example.hikokainotes.database.NotesDatabase;
 import com.example.hikokainotes.entities.Note;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipDrawable;
+import com.google.android.material.chip.ChipGroup;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -32,6 +37,7 @@ import jp.wasabeef.richeditor.RichEditor;
 public class NoteActivity extends AppCompatActivity {
     private EditText inputNoteTitle, inputTag;
     private TextView textUpdateTime;
+    private ChipGroup chipGroup;
 
     private RichEditor editor;
     private Note availableNote;
@@ -159,7 +165,34 @@ public class NoteActivity extends AppCompatActivity {
 
         inputNoteTitle = findViewById(R.id.inputNoteTitle);
         textUpdateTime = findViewById(R.id.textUpdateTime);
+
+        chipGroup = findViewById(R.id.chip_group);
+
         inputTag = findViewById(R.id.inputTag);
+        inputTag.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
+                    Chip chip = new Chip(NoteActivity.this);
+                    ChipDrawable drawable = ChipDrawable.createFromAttributes(NoteActivity.this, null, 0, R.style.Widget_MaterialComponents_Chip_Entry);
+                    chip.setChipDrawable(drawable);
+                    chip.setCheckable(false);
+                    chip.setClickable(false);
+                    chip.setPadding(60, 10, 60, 10);
+                    chip.setText(inputTag.getText().toString());
+                    chip.setOnCloseIconClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            chipGroup.removeView(chip);
+                        }
+                    });
+                    chipGroup.addView(chip);
+                    inputTag.setText("");
+                    return true;
+                }
+                return false;
+            }
+        });
 
         textUpdateTime.setText(new SimpleDateFormat("dd MM yyyy HH:mm:ss a", Locale.getDefault()).format(new Date()));
 
@@ -234,6 +267,7 @@ public class NoteActivity extends AppCompatActivity {
 
         if (availableNote != null) {
             layoutMiscellaneous.findViewById(R.id.layoutDeleteNote).setVisibility(View.VISIBLE);
+            layoutMiscellaneous.findViewById(R.id.textMiscellaneous).setVisibility(View.VISIBLE);
             layoutMiscellaneous.findViewById(R.id.layoutDeleteNote).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

@@ -1,4 +1,4 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.HikokaiNotes" parent="Theme.AppCompat.Light.NoActionBar"/>
+    <style name="Theme.HikokaiNotes" parent="Theme.MaterialComponents.Light.NoActionBar"/>
 </resources>
