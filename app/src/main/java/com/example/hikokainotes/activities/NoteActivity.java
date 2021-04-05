@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,6 +24,8 @@ public class NoteActivity extends AppCompatActivity {
     private EditText inputNoteTitle, inputNoteText, inputTag;
     private TextView textUpdateTime;
 
+    private Note availableNote;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +39,7 @@ public class NoteActivity extends AppCompatActivity {
         textUpdateTime = findViewById(R.id.textUpdateTime);
         inputTag = findViewById(R.id.inputTag);
 
-        textUpdateTime.setText(new SimpleDateFormat("EEEE, dd MM yyyy HH:mm:ss a", Locale.getDefault()).format(new Date()));
+        textUpdateTime.setText(new SimpleDateFormat("dd MM yyyy HH:mm:ss a", Locale.getDefault()).format(new Date()));
 
         ImageView saveButton = findViewById(R.id.imageDone);
         saveButton.setOnClickListener(new View.OnClickListener() {
@@ -45,6 +48,18 @@ public class NoteActivity extends AppCompatActivity {
                 saveNote();
             }
         });
+
+        if (getIntent().getBooleanExtra("isViewOrUpdate", false)) {
+            availableNote = (Note) getIntent().getSerializableExtra("note");
+            setViewOrUpdateNote();
+        }
+    }
+
+    private void setViewOrUpdateNote() {
+        inputNoteTitle.setText(availableNote.getTitle());
+        inputTag.setText(availableNote.getTag());
+        inputNoteText.setText(availableNote.getNoteText());
+        textUpdateTime.setText(availableNote.getUpdateTime());
     }
 
     private void saveNote() {
@@ -56,6 +71,10 @@ public class NoteActivity extends AppCompatActivity {
             note.setNoteText(inputNoteText.getText().toString());
             note.setUpdateTime(textUpdateTime.getText().toString());
             note.setTag(inputTag.getText().toString());
+
+            if (availableNote != null) {
+                note.setId(availableNote.getId());
+            }
 
             @SuppressLint("StaticFieldLeak")
             class SaveNoteTask extends AsyncTask<Void, Void, Void> {
