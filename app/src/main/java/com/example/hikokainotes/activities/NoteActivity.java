@@ -155,6 +155,7 @@ public class NoteActivity extends AppCompatActivity {
                             Intent intent = new Intent();
                             intent.putExtra("isNoteDeleted", true);
                             setResult(RESULT_OK, intent);
+                            dialogDelete.dismiss();
                             finish();
                         }
                     }
