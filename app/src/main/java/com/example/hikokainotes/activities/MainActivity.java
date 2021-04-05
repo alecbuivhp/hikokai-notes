@@ -8,10 +8,15 @@ import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -83,6 +88,57 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
         intent.putExtra("note", note);
         startActivityForResult(intent, REQUEST_CODE_UPDATE_NOTE);
     }
+
+    @Override
+    public void onDeleteClicked(int position) {
+        noteClickedPosition = position;
+        showDeleteDialog();
+    }
+
+    private void showDeleteDialog() {
+        if (dialogDelete == null) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            View view = LayoutInflater.from(this).inflate(R.layout.layout_delete_note, (ViewGroup) findViewById(R.id.layoutDeleteNoteContainer));
+            builder.setView(view);
+            dialogDelete = builder.create();
+            if (dialogDelete.getWindow() != null) {
+                dialogDelete.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+            }
+            view.findViewById(R.id.textConfirm).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    class DeleteNoteTask extends AsyncTask<Void, Void, Void> {
+
+                        @Override
+                        protected Void doInBackground(Void... voids) {
+                            NotesDatabase.getDatabase(getApplicationContext()).noteDao().deleteNote(noteList.get(noteClickedPosition));
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Void aVoid) {
+                            super.onPostExecute(aVoid);
+                            Intent intent = new Intent();
+                            intent.putExtra("isNoteDeleted", true);
+                            setResult(RESULT_OK, intent);
+                            dialogDelete.dismiss();
+                        }
+                    }
+                    new DeleteNoteTask().execute();
+                    getNotes(REQUEST_CODE_UPDATE_NOTE, true);
+                }
+            });
+
+            view.findViewById(R.id.textCancel).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    dialogDelete.dismiss();
+                }
+            });
+        }
+        dialogDelete.show();
+    }
+
 
     private void getNotes(final int requestCode, final boolean isNoteDeleted) {
         @SuppressLint("StaticFieldLeak")

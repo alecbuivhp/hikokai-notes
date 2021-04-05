@@ -59,13 +59,14 @@
     </LinearLayout>
 
     <ImageView
-        android:layout_width="@dimen/_13sdp"
-        android:layout_height="@dimen/_13sdp"
+        android:id="@+id/deleteButton"
+        android:layout_width="@dimen/_15sdp"
+        android:layout_height="@dimen/_15sdp"
         android:layout_gravity="top|end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/layoutNote"
         android:src="@drawable/ic_clear"
-        app:tint="@color/colorIcons"
+        app:tint="@color/colorDelete"
         android:background="@drawable/background_remove_button"
         android:layout_marginTop="@dimen/_5sdp"
         android:layout_marginRight="@dimen/_5sdp"

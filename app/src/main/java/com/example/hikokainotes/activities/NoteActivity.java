@@ -5,9 +5,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,10 +27,13 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import jp.wasabeef.richeditor.RichEditor;
+
 public class NoteActivity extends AppCompatActivity {
-    private EditText inputNoteTitle, inputNoteText, inputTag;
+    private EditText inputNoteTitle, inputTag;
     private TextView textUpdateTime;
 
+    private RichEditor editor;
     private Note availableNote;
 
     private AlertDialog dialogDelete;
@@ -38,11 +43,121 @@ public class NoteActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_note_activity);
 
+        editor = findViewById(R.id.editor);
+        editor.setEditorHeight(200);
+        editor.setEditorFontSize(20);
+        editor.setEditorFontColor(Color.WHITE);
+
+        findViewById(R.id.action_undo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.undo();
+            }
+        });
+
+        findViewById(R.id.action_redo).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.redo();
+            }
+        });
+
+        findViewById(R.id.action_bold).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setBold();
+            }
+        });
+
+        findViewById(R.id.action_italic).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setItalic();
+            }
+        });
+
+        findViewById(R.id.action_subscript).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setSubscript();
+            }
+        });
+
+        findViewById(R.id.action_superscript).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setSuperscript();
+            }
+        });
+
+        findViewById(R.id.action_strikethrough).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setStrikeThrough();
+            }
+        });
+
+        findViewById(R.id.action_underline).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setUnderline();
+            }
+        });
+
+
+        findViewById(R.id.action_indent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setIndent();
+            }
+        });
+
+        findViewById(R.id.action_outdent).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setOutdent();
+            }
+        });
+
+        findViewById(R.id.action_align_left).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setAlignLeft();
+            }
+        });
+
+        findViewById(R.id.action_align_center).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setAlignCenter();
+            }
+        });
+
+        findViewById(R.id.action_align_right).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setAlignRight();
+            }
+        });
+
+        findViewById(R.id.action_insert_bullets).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setBullets();
+            }
+        });
+
+        findViewById(R.id.action_insert_numbers).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editor.setNumbers();
+            }
+        });
+
         ImageView backButton = findViewById(R.id.imageBack);
         backButton.setOnClickListener(v -> onBackPressed());
 
         inputNoteTitle = findViewById(R.id.inputNoteTitle);
-        inputNoteText = findViewById(R.id.inputNote);
         textUpdateTime = findViewById(R.id.textUpdateTime);
         inputTag = findViewById(R.id.inputTag);
 
@@ -67,17 +182,17 @@ public class NoteActivity extends AppCompatActivity {
     private void setViewOrUpdateNote() {
         inputNoteTitle.setText(availableNote.getTitle());
         inputTag.setText(availableNote.getTag());
-        inputNoteText.setText(availableNote.getNoteText());
+        editor.setHtml(availableNote.getNoteText());
         textUpdateTime.setText(availableNote.getUpdateTime());
     }
 
     private void saveNote() {
-        if (inputNoteTitle.getText().toString().trim().isEmpty() && inputNoteText.getText().toString().trim().isEmpty() && inputTag.getText().toString().trim().isEmpty()) {
+        if (inputNoteTitle.getText().toString().trim().isEmpty() && editor.getHtml().isEmpty() && inputTag.getText().toString().trim().isEmpty()) {
             finish();
         } else {
             final Note note = new Note();
             note.setTitle(inputNoteTitle.getText().toString());
-            note.setNoteText(inputNoteText.getText().toString());
+            note.setNoteText(editor.getHtml());
             note.setUpdateTime(textUpdateTime.getText().toString());
             note.setTag(inputTag.getText().toString());
 

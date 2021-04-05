@@ -52,4 +52,7 @@ dependencies {
 
     // Rounded ImageView
     implementation 'com.makeramen:roundedimageview:2.3.0'
+
+    // Editor
+    implementation 'jp.wasabeef:richeditor-android:2.0.0'
 }

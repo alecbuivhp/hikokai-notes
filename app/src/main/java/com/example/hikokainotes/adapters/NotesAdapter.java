@@ -5,6 +5,7 @@ import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -41,12 +42,8 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     @Override
     public void onBindViewHolder(@NonNull NoteViewHolder holder, final int position) {
         holder.setNote(notes.get(position));
-        holder.layoutNote.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                notesListener.onNoteClicked(notes.get(position), position);
-            }
-        });
+        holder.layoutNote.setOnClickListener(v -> notesListener.onNoteClicked(notes.get(position), position));
+        holder.deleteButton.setOnClickListener(v -> notesListener.onDeleteClicked(position));
     }
 
     @Override
@@ -62,6 +59,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
     static class NoteViewHolder extends RecyclerView.ViewHolder {
         TextView textTitle, textUpdateTime, textTag;
         LinearLayout layoutNote;
+        ImageView deleteButton;
 
         NoteViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -69,6 +67,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             textUpdateTime = itemView.findViewById(R.id.textUpdateTime);
             textTag = itemView.findViewById(R.id.textTag);
             layoutNote = itemView.findViewById(R.id.layoutNote);
+            deleteButton = itemView.findViewById(R.id.deleteButton);
         }
 
         void setNote(Note note) {
