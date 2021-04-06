@@ -1,16 +1,11 @@
 package com.example.hikokainotes.activities;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +14,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.hikokainotes.R;
 import com.example.hikokainotes.database.NotesDatabase;
@@ -29,9 +27,7 @@ import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import jp.wasabeef.richeditor.RichEditor;
@@ -63,10 +59,6 @@ public class NoteActivity extends AppCompatActivity {
         findViewById(R.id.action_bold).setOnClickListener(v -> editor.setBold());
 
         findViewById(R.id.action_italic).setOnClickListener(v -> editor.setItalic());
-
-        findViewById(R.id.action_subscript).setOnClickListener(v -> editor.setSubscript());
-
-        findViewById(R.id.action_superscript).setOnClickListener(v -> editor.setSuperscript());
 
         findViewById(R.id.action_strikethrough).setOnClickListener(v -> editor.setStrikeThrough());
 
@@ -130,17 +122,19 @@ public class NoteActivity extends AppCompatActivity {
         editor.setHtml(availableNote.getNoteText());
         textUpdateTime.setText(availableNote.getUpdateTime());
 
-        String[] tags = availableNote.getTags().split("\\|");
-        for(String t : tags){
-            Chip chip = new Chip(NoteActivity.this);
-            ChipDrawable drawable = ChipDrawable.createFromAttributes(NoteActivity.this, null, 0, R.style.Widget_MaterialComponents_Chip_Entry);
-            chip.setChipDrawable(drawable);
-            chip.setCheckable(false);
-            chip.setClickable(false);
-            chip.setPadding(60, 10, 60, 10);
-            chip.setText(t);
-            chip.setOnCloseIconClickListener(v -> chipGroup.removeView(chip));
-            chipGroup.addView(chip);
+        if (!availableNote.getTags().equals("")) {
+            String[] tags = availableNote.getTags().split("\\|");
+            for (String t : tags) {
+                Chip chip = new Chip(NoteActivity.this);
+                ChipDrawable drawable = ChipDrawable.createFromAttributes(NoteActivity.this, null, 0, R.style.Widget_MaterialComponents_Chip_Entry);
+                chip.setChipDrawable(drawable);
+                chip.setCheckable(false);
+                chip.setClickable(false);
+                chip.setPadding(60, 10, 60, 10);
+                chip.setText(t);
+                chip.setOnCloseIconClickListener(v -> chipGroup.removeView(chip));
+                chipGroup.addView(chip);
+            }
         }
     }
 
@@ -162,6 +156,7 @@ public class NoteActivity extends AppCompatActivity {
                     tempTags.append(chip.getText().toString()).append("|");
                 }
             }
+
             note.setTags(String.valueOf(tempTags));
 
             if (availableNote != null) {

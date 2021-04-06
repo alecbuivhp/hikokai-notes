@@ -17,6 +17,7 @@ import com.example.hikokainotes.entities.Note;
 import com.example.hikokainotes.listeners.NotesListener;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -87,7 +88,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
                 } else {
                     ArrayList<Note> temp = new ArrayList<>();
                     for (Note note : notesSource) {
-                        if (note.getTitle().toLowerCase().contains(keyword.toLowerCase()) || note.getNoteText().toLowerCase().contains(keyword.toLowerCase())) {
+                        if (note.getTitle().toLowerCase().contains(keyword.toLowerCase()) || (note.getNoteText() != null && note.getNoteText().toLowerCase().contains(keyword.toLowerCase()))) {
                             temp.add(note);
                         }
                     }
@@ -97,10 +98,28 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
             }
         }, 500);
     }
-    
+
     public void cancelTimer() {
         if (timer != null) {
             timer.cancel();
         }
+    }
+
+    public void searchTags(final List<String> tags) {
+        if (tags.size() == 0) {
+            notes = notesSource;
+        } else {
+            List<Note> temp = new ArrayList<>();
+            for (Note note : notesSource) {
+                List<String> tagsNote = new ArrayList<>(Arrays.asList(note.getTags().split("\\|")));
+                tagsNote.retainAll(tags);
+
+                if (tagsNote.size() != 0) {
+                    temp.add(note);
+                }
+            }
+            notes = temp;
+        }
+        new Handler(Looper.getMainLooper()).post(this::notifyDataSetChanged);
     }
 }

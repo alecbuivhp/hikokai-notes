@@ -51,8 +51,9 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
 
     int[] searchMode = {R.drawable.ic_search, R.drawable.ic_tag};
     private ChipGroup chipGroupSearch;
+    private EditText inputSearch;
 
-    private int searchChosen = 0;
+    int searchChosen = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,14 +72,13 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
 
         getNotes(REQUEST_CODE_SHOW_NOTES, false);
 
-        EditText inputSearch = findViewById(R.id.inputSearch);
+        inputSearch = findViewById(R.id.inputSearch);
         chipGroupSearch = findViewById(R.id.chip_group_search);
 
         // Text Listener search word
         TextWatcher textWatcher = new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             @Override
@@ -110,9 +110,15 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
                 chip.setClickable(false);
                 chip.setPadding(60, 10, 60, 10);
                 chip.setText(inputSearch.getText().toString());
-                chip.setOnCloseIconClickListener(v1 -> chipGroupSearch.removeView(chip));
+                chip.setOnCloseIconClickListener(v1 -> {
+                    chipGroupSearch.removeView(chip);
+                    notesAdapter.searchTags(getCurrentTags());
+                });
+
                 chipGroupSearch.addView(chip);
                 inputSearch.setText("");
+
+                notesAdapter.searchTags(getCurrentTags());
                 return true;
             }
             return false;
@@ -122,8 +128,11 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                inputSearch.setText("");
                 searchChosen = position;
                 if (position == 0) {
+                    chipGroupSearch.removeAllViews();
+                    notesAdapter.searchTags(getCurrentTags());
                     chipGroupSearch.setVisibility(View.GONE);
                     inputSearch.addTextChangedListener(textWatcher);
 
@@ -140,6 +149,15 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
 
         SpinnerAdapter spinnerAdapter = new SpinnerAdapter(getApplicationContext(), searchMode);
         spin.setAdapter(spinnerAdapter);
+    }
+
+    private ArrayList<String> getCurrentTags() {
+        ArrayList<String> tagSearch = new ArrayList<>();
+        for (int i = 0; i < chipGroupSearch.getChildCount(); i++) {
+            Chip c = (Chip) chipGroupSearch.getChildAt(i);
+            tagSearch.add(c.getText().toString());
+        }
+        return tagSearch;
     }
 
     @Override
@@ -223,6 +241,14 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
                     } else {
                         noteList.add(noteClickedPosition, notes.get(noteClickedPosition));
                         notesAdapter.notifyItemChanged(noteClickedPosition);
+
+                        if (searchChosen == 0) {
+                            String temp = inputSearch.getText().toString();
+                            inputSearch.setText(temp);
+                            inputSearch.setSelection(temp.length());
+                        } else if (searchChosen == 1) {
+                            notesAdapter.searchTags(getCurrentTags());
+                        }
                     }
                 }
             }
