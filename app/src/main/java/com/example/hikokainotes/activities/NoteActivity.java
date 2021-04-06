@@ -29,7 +29,9 @@ import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import jp.wasabeef.richeditor.RichEditor;
@@ -214,23 +216,46 @@ public class NoteActivity extends AppCompatActivity {
 
     private void setViewOrUpdateNote() {
         inputNoteTitle.setText(availableNote.getTitle());
-        inputTag.setText(availableNote.getTag());
         editor.setHtml(availableNote.getNoteText());
         textUpdateTime.setText(availableNote.getUpdateTime());
+
+        String[] tags = availableNote.getTags().split("\\|");
+        for(String t : tags){
+            Chip chip = new Chip(NoteActivity.this);
+            ChipDrawable drawable = ChipDrawable.createFromAttributes(NoteActivity.this, null, 0, R.style.Widget_MaterialComponents_Chip_Entry);
+            chip.setChipDrawable(drawable);
+            chip.setCheckable(false);
+            chip.setClickable(false);
+            chip.setPadding(60, 10, 60, 10);
+            chip.setText(t);
+            chip.setOnCloseIconClickListener(v -> chipGroup.removeView(chip));
+            chipGroup.addView(chip);
+        }
     }
 
     private void saveNote() {
-        if (inputNoteTitle.getText().toString().trim().isEmpty() && editor.getHtml().isEmpty() && inputTag.getText().toString().trim().isEmpty()) {
+        if (inputNoteTitle.getText().toString().trim().isEmpty() && editor.getHtml().isEmpty()) {
             finish();
         } else {
             final Note note = new Note();
             note.setTitle(inputNoteTitle.getText().toString());
             note.setNoteText(editor.getHtml());
             note.setUpdateTime(textUpdateTime.getText().toString());
-            note.setTag(inputTag.getText().toString());
+
+            StringBuilder tempTags = new StringBuilder();
+            for (int i = 0; i < chipGroup.getChildCount(); i++) {
+                Chip chip = (Chip) chipGroup.getChildAt(i);
+                if (i == chipGroup.getChildCount() - 1) {
+                    tempTags.append(chip.getText().toString());
+                } else {
+                    tempTags.append(chip.getText().toString()).append("|");
+                }
+            }
+            note.setTags(String.valueOf(tempTags));
 
             if (availableNote != null) {
                 note.setId(availableNote.getId());
+                note.setUpdateTime(new SimpleDateFormat("dd MM yyyy HH:mm:ss a", Locale.getDefault()).format(new Date()));
             }
 
             @SuppressLint("StaticFieldLeak")

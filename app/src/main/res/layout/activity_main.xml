@@ -35,12 +35,12 @@
         android:paddingEnd="@dimen/_10sdp"
         app:layout_constraintTop_toBottomOf="@+id/textHeader">
 
-        <ImageView
-            android:layout_width="@dimen/_20sdp"
-            android:layout_height="@dimen/_20sdp"
-            android:contentDescription="@string/app_name"
-            android:src="@drawable/ic_search"
-            app:tint="@color/colorSearchIcon" />
+        <Spinner
+            android:id="@+id/spinner"
+            android:layout_width="@dimen/_65sdp"
+            android:layout_height="@dimen/_35sdp"
+            app:tint="@color/colorSearchIcon"
+            android:popupBackground="@color/colorPrimary"/>
 
         <EditText
             android:id="@+id/inputSearch"
@@ -60,6 +60,19 @@
             android:textSize="@dimen/_13ssp" />
     </LinearLayout>
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/chip_group_search"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_12sdp"
+        android:layout_marginTop="@dimen/_12ssp"
+        android:layout_marginEnd="@dimen/_12sdp"
+        app:layout_constraintBottom_toTopOf="@id/notesRecyclerView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/layoutSearch"
+        android:visibility="gone"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notesRecyclerView"
         android:layout_width="match_parent"
@@ -71,7 +84,7 @@
         android:paddingRight="@dimen/_12sdp"
         android:paddingBottom="@dimen/_12sdp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/layoutSearch" />
+        app:layout_constraintTop_toBottomOf="@id/chip_group_search" />
 
 
     <ImageView

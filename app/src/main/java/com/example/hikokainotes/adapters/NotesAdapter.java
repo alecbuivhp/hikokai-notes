@@ -73,7 +73,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         void setNote(Note note) {
             textTitle.setText(note.getTitle());
             textUpdateTime.setText(note.getUpdateTime());
-            textTag.setText(note.getTag());
+            textTag.setText(note.getTags().replace("|", ", "));
         }
     }
 
@@ -87,7 +87,7 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
                 } else {
                     ArrayList<Note> temp = new ArrayList<>();
                     for (Note note : notesSource) {
-                        if (note.getTitle().toLowerCase().contains(keyword.toLowerCase()) || note.getTag().toLowerCase().contains(keyword.toLowerCase()) || note.getNoteText().toLowerCase().contains(keyword.toLowerCase())) {
+                        if (note.getTitle().toLowerCase().contains(keyword.toLowerCase()) || note.getNoteText().toLowerCase().contains(keyword.toLowerCase())) {
                             temp.add(note);
                         }
                     }

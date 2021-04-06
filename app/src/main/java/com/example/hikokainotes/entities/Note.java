@@ -22,8 +22,8 @@ public class Note implements Serializable {
     @ColumnInfo(name = "note_text")
     private String noteText;
 
-    @ColumnInfo(name = "tag")
-    private String tag;
+    @ColumnInfo(name = "tags")
+    private String tags;
 
     public int getId() {
         return id;
@@ -57,12 +57,12 @@ public class Note implements Serializable {
         this.noteText = noteText;
     }
 
-    public String getTag() {
-        return tag;
+    public String getTags() {
+        return tags;
     }
 
-    public void setTag(String tag) {
-        this.tag = tag;
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     @NonNull
