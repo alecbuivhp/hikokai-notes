@@ -56,111 +56,35 @@ public class NoteActivity extends AppCompatActivity {
         editor.setEditorFontSize(20);
         editor.setEditorFontColor(Color.WHITE);
 
-        findViewById(R.id.action_undo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.undo();
-            }
-        });
+        findViewById(R.id.action_undo).setOnClickListener(v -> editor.undo());
 
-        findViewById(R.id.action_redo).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.redo();
-            }
-        });
+        findViewById(R.id.action_redo).setOnClickListener(v -> editor.redo());
 
-        findViewById(R.id.action_bold).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setBold();
-            }
-        });
+        findViewById(R.id.action_bold).setOnClickListener(v -> editor.setBold());
 
-        findViewById(R.id.action_italic).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setItalic();
-            }
-        });
+        findViewById(R.id.action_italic).setOnClickListener(v -> editor.setItalic());
 
-        findViewById(R.id.action_subscript).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setSubscript();
-            }
-        });
+        findViewById(R.id.action_subscript).setOnClickListener(v -> editor.setSubscript());
 
-        findViewById(R.id.action_superscript).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setSuperscript();
-            }
-        });
+        findViewById(R.id.action_superscript).setOnClickListener(v -> editor.setSuperscript());
 
-        findViewById(R.id.action_strikethrough).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setStrikeThrough();
-            }
-        });
+        findViewById(R.id.action_strikethrough).setOnClickListener(v -> editor.setStrikeThrough());
 
-        findViewById(R.id.action_underline).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setUnderline();
-            }
-        });
+        findViewById(R.id.action_underline).setOnClickListener(v -> editor.setUnderline());
 
+        findViewById(R.id.action_indent).setOnClickListener(v -> editor.setIndent());
 
-        findViewById(R.id.action_indent).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setIndent();
-            }
-        });
+        findViewById(R.id.action_outdent).setOnClickListener(v -> editor.setOutdent());
 
-        findViewById(R.id.action_outdent).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setOutdent();
-            }
-        });
+        findViewById(R.id.action_align_left).setOnClickListener(v -> editor.setAlignLeft());
 
-        findViewById(R.id.action_align_left).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setAlignLeft();
-            }
-        });
+        findViewById(R.id.action_align_center).setOnClickListener(v -> editor.setAlignCenter());
 
-        findViewById(R.id.action_align_center).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setAlignCenter();
-            }
-        });
+        findViewById(R.id.action_align_right).setOnClickListener(v -> editor.setAlignRight());
 
-        findViewById(R.id.action_align_right).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setAlignRight();
-            }
-        });
+        findViewById(R.id.action_insert_bullets).setOnClickListener(v -> editor.setBullets());
 
-        findViewById(R.id.action_insert_bullets).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setBullets();
-            }
-        });
-
-        findViewById(R.id.action_insert_numbers).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                editor.setNumbers();
-            }
-        });
+        findViewById(R.id.action_insert_numbers).setOnClickListener(v -> editor.setNumbers());
 
         ImageView backButton = findViewById(R.id.imageBack);
         backButton.setOnClickListener(v -> onBackPressed());
@@ -171,40 +95,27 @@ public class NoteActivity extends AppCompatActivity {
         chipGroup = findViewById(R.id.chip_group);
 
         inputTag = findViewById(R.id.inputTag);
-        inputTag.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if (actionId == EditorInfo.IME_ACTION_DONE) {
-                    Chip chip = new Chip(NoteActivity.this);
-                    ChipDrawable drawable = ChipDrawable.createFromAttributes(NoteActivity.this, null, 0, R.style.Widget_MaterialComponents_Chip_Entry);
-                    chip.setChipDrawable(drawable);
-                    chip.setCheckable(false);
-                    chip.setClickable(false);
-                    chip.setPadding(60, 10, 60, 10);
-                    chip.setText(inputTag.getText().toString());
-                    chip.setOnCloseIconClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            chipGroup.removeView(chip);
-                        }
-                    });
-                    chipGroup.addView(chip);
-                    inputTag.setText("");
-                    return true;
-                }
-                return false;
+        inputTag.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                Chip chip = new Chip(NoteActivity.this);
+                ChipDrawable drawable = ChipDrawable.createFromAttributes(NoteActivity.this, null, 0, R.style.Widget_MaterialComponents_Chip_Entry);
+                chip.setChipDrawable(drawable);
+                chip.setCheckable(false);
+                chip.setClickable(false);
+                chip.setPadding(60, 10, 60, 10);
+                chip.setText(inputTag.getText().toString());
+                chip.setOnCloseIconClickListener(v1 -> chipGroup.removeView(chip));
+                chipGroup.addView(chip);
+                inputTag.setText("");
+                return true;
             }
+            return false;
         });
 
         textUpdateTime.setText(new SimpleDateFormat("dd MM yyyy HH:mm:ss a", Locale.getDefault()).format(new Date()));
 
         ImageView saveButton = findViewById(R.id.imageDone);
-        saveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                saveNote();
-            }
-        });
+        saveButton.setOnClickListener(v -> saveNote());
 
         if (getIntent().getBooleanExtra("isViewOrUpdate", false)) {
             availableNote = (Note) getIntent().getSerializableExtra("note");
@@ -337,12 +248,7 @@ public class NoteActivity extends AppCompatActivity {
                 }
             });
 
-            view.findViewById(R.id.textCancel).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    dialogDelete.dismiss();
-                }
-            });
+            view.findViewById(R.id.textCancel).setOnClickListener(v -> dialogDelete.dismiss());
         }
 
         dialogDelete.show();
