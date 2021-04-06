@@ -17,7 +17,6 @@ import com.example.hikokainotes.entities.Note;
 import com.example.hikokainotes.listeners.NotesListener;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -74,7 +73,18 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         void setNote(Note note) {
             textTitle.setText(note.getTitle());
             textUpdateTime.setText(note.getUpdateTime());
-            textTag.setText(note.getTags().replace("|", ", "));
+
+            StringBuilder tempTags = new StringBuilder();
+            ArrayList<String> tags = note.getTags();
+            for (int i = 0; i < tags.size(); i++) {
+                if (i == tags.size() - 1) {
+                    tempTags.append(tags.get(i));
+                } else {
+                    tempTags.append(tags.get(i)).append(", ");
+                }
+
+            }
+            textTag.setText(tempTags);
         }
     }
 
@@ -111,10 +121,11 @@ public class NotesAdapter extends RecyclerView.Adapter<NotesAdapter.NoteViewHold
         } else {
             List<Note> temp = new ArrayList<>();
             for (Note note : notesSource) {
-                List<String> tagsNote = new ArrayList<>(Arrays.asList(note.getTags().split("\\|")));
-                tagsNote.retainAll(tags);
+                List<String> tagsNote = note.getTags();
+                List<String> tempList = new ArrayList<>(tagsNote);
+                tempList.retainAll(tags);
 
-                if (tagsNote.size() != 0) {
+                if (tempList.size() != 0) {
                     temp.add(note);
                 }
             }

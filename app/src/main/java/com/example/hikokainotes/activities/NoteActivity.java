@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,7 @@ import com.google.android.material.chip.ChipDrawable;
 import com.google.android.material.chip.ChipGroup;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
@@ -121,9 +123,9 @@ public class NoteActivity extends AppCompatActivity {
         inputNoteTitle.setText(availableNote.getTitle());
         editor.setHtml(availableNote.getNoteText());
         textUpdateTime.setText(availableNote.getUpdateTime());
+        ArrayList<String> tags = availableNote.getTags();
 
-        if (!availableNote.getTags().equals("")) {
-            String[] tags = availableNote.getTags().split("\\|");
+        if (tags.size() != 0) {
             for (String t : tags) {
                 Chip chip = new Chip(NoteActivity.this);
                 ChipDrawable drawable = ChipDrawable.createFromAttributes(NoteActivity.this, null, 0, R.style.Widget_MaterialComponents_Chip_Entry);
@@ -147,17 +149,13 @@ public class NoteActivity extends AppCompatActivity {
             note.setNoteText(editor.getHtml());
             note.setUpdateTime(textUpdateTime.getText().toString());
 
-            StringBuilder tempTags = new StringBuilder();
+            ArrayList<String> tempTags = new ArrayList<>();
             for (int i = 0; i < chipGroup.getChildCount(); i++) {
                 Chip chip = (Chip) chipGroup.getChildAt(i);
-                if (i == chipGroup.getChildCount() - 1) {
-                    tempTags.append(chip.getText().toString());
-                } else {
-                    tempTags.append(chip.getText().toString()).append("|");
-                }
+                tempTags.add(chip.getText().toString());
             }
 
-            note.setTags(String.valueOf(tempTags));
+            note.setTags(tempTags);
 
             if (availableNote != null) {
                 note.setId(availableNote.getId());
@@ -199,12 +197,9 @@ public class NoteActivity extends AppCompatActivity {
         if (availableNote != null) {
             layoutMiscellaneous.findViewById(R.id.layoutDeleteNote).setVisibility(View.VISIBLE);
             layoutMiscellaneous.findViewById(R.id.textMiscellaneous).setVisibility(View.VISIBLE);
-            layoutMiscellaneous.findViewById(R.id.layoutDeleteNote).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                    showDeleteDialog();
-                }
+            layoutMiscellaneous.findViewById(R.id.layoutDeleteNote).setOnClickListener(v -> {
+                bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+                showDeleteDialog();
             });
         }
     }

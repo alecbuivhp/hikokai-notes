@@ -6,6 +6,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 @Entity(tableName = "notes")
 
@@ -23,7 +24,7 @@ public class Note implements Serializable {
     private String noteText;
 
     @ColumnInfo(name = "tags")
-    private String tags;
+    private ArrayList<String> tags;
 
     public int getId() {
         return id;
@@ -57,11 +58,11 @@ public class Note implements Serializable {
         this.noteText = noteText;
     }
 
-    public String getTags() {
+    public ArrayList<String> getTags() {
         return tags;
     }
 
-    public void setTags(String tags) {
+    public void setTags(ArrayList<String> tags) {
         this.tags = tags;
     }
 
