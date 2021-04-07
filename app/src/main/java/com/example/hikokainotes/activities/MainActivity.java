@@ -1,13 +1,12 @@
 package com.example.hikokainotes.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +36,8 @@ import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity implements NotesListener {
     public static final int REQUEST_CODE_ADD_NOTE = 1;
@@ -133,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
             return false;
         };
 
-        Spinner spin = (Spinner) findViewById(R.id.spinner);
+        Spinner spin = findViewById(R.id.spinner);
         spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -196,24 +197,19 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
             view.findViewById(R.id.textConfirm).setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    class DeleteNoteTask extends AsyncTask<Void, Void, Void> {
+                    // Delete task
+                    ExecutorService executor = Executors.newSingleThreadExecutor();
+                    executor.execute(() -> {
+                        NotesDatabase.getDatabase(getApplicationContext()).noteDao().deleteNote(noteList.get(noteClickedPosition));
 
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            NotesDatabase.getDatabase(getApplicationContext()).noteDao().deleteNote(noteList.get(noteClickedPosition));
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Void aVoid) {
-                            super.onPostExecute(aVoid);
+                        new Handler(Looper.getMainLooper()).post(() -> {
                             Intent intent = new Intent();
                             intent.putExtra("isNoteDeleted", true);
                             setResult(RESULT_OK, intent);
                             dialogDelete.dismiss();
-                        }
-                    }
-                    new DeleteNoteTask().execute();
+                        });
+                    });
+
                     getNotes(REQUEST_CODE_UPDATE_NOTE, true);
                 }
             });
@@ -225,17 +221,11 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
 
 
     private void getNotes(final int requestCode, final boolean isNoteDeleted) {
-        @SuppressLint("StaticFieldLeak")
-        class GetNotesTask extends AsyncTask<Void, Void, List<Note>> {
-
-            @Override
-            protected List<Note> doInBackground(Void... voids) {
-                return NotesDatabase.getDatabase(getApplicationContext()).noteDao().getAllNotes();
-            }
-
-            @Override
-            protected void onPostExecute(List<Note> notes) {
-                super.onPostExecute(notes);
+        // Get notes task
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            List<Note> notes = NotesDatabase.getDatabase(getApplicationContext()).noteDao().getAllNotes();
+            new Handler(Looper.getMainLooper()).post(() -> {
                 if (requestCode == REQUEST_CODE_SHOW_NOTES) {
                     noteList.addAll(notes);
                     notesAdapter.notifyDataSetChanged();
@@ -259,10 +249,8 @@ public class MainActivity extends AppCompatActivity implements NotesListener {
                         notesAdapter.searchTags(getCurrentTags());
                     }
                 }
-            }
-        }
-
-        new GetNotesTask().execute();
+            });
+        });
     }
 
     @Override

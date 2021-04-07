@@ -1,12 +1,11 @@
 package com.example.hikokainotes.activities;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import jp.wasabeef.richeditor.RichEditor;
 
@@ -162,24 +163,17 @@ public class NoteActivity extends AppCompatActivity {
                 note.setUpdateTime(new SimpleDateFormat("dd MM yyyy HH:mm:ss a", Locale.getDefault()).format(new Date()));
             }
 
-            @SuppressLint("StaticFieldLeak")
-            class SaveNoteTask extends AsyncTask<Void, Void, Void> {
+            // Save task
+            ExecutorService executor = Executors.newSingleThreadExecutor();
+            executor.execute(() -> {
+                NotesDatabase.getDatabase(getApplicationContext()).noteDao().insertNote(note);
 
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    NotesDatabase.getDatabase(getApplicationContext()).noteDao().insertNote(note);
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void aVoid) {
-                    super.onPostExecute(aVoid);
+                new Handler(Looper.getMainLooper()).post(() -> {
                     Intent intent = new Intent();
                     setResult(RESULT_OK, intent);
                     finish();
-                }
-            }
-            new SaveNoteTask().execute();
+                });
+            });
         }
     }
 
@@ -213,29 +207,20 @@ public class NoteActivity extends AppCompatActivity {
             if (dialogDelete.getWindow() != null) {
                 dialogDelete.getWindow().setBackgroundDrawable(new ColorDrawable(0));
             }
-            view.findViewById(R.id.textConfirm).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    class DeleteNoteTask extends AsyncTask<Void, Void, Void> {
+            view.findViewById(R.id.textConfirm).setOnClickListener(v -> {
+                // Delete task
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                executor.execute(() -> {
+                    NotesDatabase.getDatabase(getApplicationContext()).noteDao().deleteNote(availableNote);
 
-                        @Override
-                        protected Void doInBackground(Void... voids) {
-                            NotesDatabase.getDatabase(getApplicationContext()).noteDao().deleteNote(availableNote);
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Void aVoid) {
-                            super.onPostExecute(aVoid);
-                            Intent intent = new Intent();
-                            intent.putExtra("isNoteDeleted", true);
-                            setResult(RESULT_OK, intent);
-                            dialogDelete.dismiss();
-                            finish();
-                        }
-                    }
-                    new DeleteNoteTask().execute();
-                }
+                    new Handler(Looper.getMainLooper()).post(() -> {
+                        Intent intent = new Intent();
+                        intent.putExtra("isNoteDeleted", true);
+                        setResult(RESULT_OK, intent);
+                        dialogDelete.dismiss();
+                        finish();
+                    });
+                });
             });
 
             view.findViewById(R.id.textCancel).setOnClickListener(v -> dialogDelete.dismiss());
