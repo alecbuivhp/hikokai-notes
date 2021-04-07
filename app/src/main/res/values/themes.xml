@@ -1,4 +1,7 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Theme.HikokaiNotes" parent="Theme.MaterialComponents.NoActionBar" />
+    <style name="Theme.HikokaiNotes" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorControlActivated">@color/colorWhite</item>
+    </style>
 </resources>
